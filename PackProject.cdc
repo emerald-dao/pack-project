@@ -2,10 +2,11 @@ import NonFungibleToken from "./utilities/NonFungibleToken.cdc"
 
 pub contract PackProject {
 
+  pub var totalPacks: UInt64
+  access(self) var packs: @{Address: [Pack]}
+
   pub let CollectionPublicPath: PublicPath
   pub let CollectionStoragePath: StoragePath
-
-  pub var packs: @{Address: [Pack]}
 
   pub resource Pack {
     pub var storedNFTs: @{UInt64: NonFungibleToken.NFT}
@@ -21,6 +22,7 @@ pub contract PackProject {
 
     init(nfts: @{UInt64: NonFungibleToken.NFT}) {
       self.storedNFTs <- nfts
+      PackProject.totalPacks = PackProject.totalPacks + 1
     }
 
     destroy() {
@@ -88,6 +90,7 @@ pub contract PackProject {
     self.CollectionStoragePath = /storage/PackProjectCollection
     self.CollectionPublicPath = /public/PackProjectCollection
 
+    self.totalPacks = 0
     self.packs <- {}
   }
 
