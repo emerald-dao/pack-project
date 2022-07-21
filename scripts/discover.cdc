@@ -1,7 +1,7 @@
 import MetadataViews from "../utilities/MetadataViews.cdc"
 
-pub fun main(user: Address): {String: [MetadataViews.Display]} {
-  var nfts: {String: [MetadataViews.Display]} = {}
+pub fun main(user: Address): {String: {UInt64: MetadataViews.Display?}} {
+  var nfts: {String: {UInt64: MetadataViews.Display?}} = {}
   let acct = getAuthAccount(user)
   let paths: [Paths] = [
     Paths(name: "TopShot", pp: "MomentCollection", sp: "MomentCollection"),
@@ -12,11 +12,11 @@ pub fun main(user: Address): {String: [MetadataViews.Display]} {
     let tempPublicPath: PublicPath = PublicPath(identifier: "Geeft".concat(path.publicPath))!
     acct.link<&{MetadataViews.ResolverCollection}>(tempPublicPath, target: StoragePath(identifier: path.storagePath)!)
 
-    let structs: [MetadataViews.Display] = []
+    let structs: {UInt64: MetadataViews.Display?} = {}
     if let collection = acct.getCapability(tempPublicPath).borrow<&{MetadataViews.ResolverCollection}>() {
       for id in collection.getIDs() {
-        let resolver = collection.borrowViewResolver(id: id)
-        structs.append(resolver.resolveView(Type<MetadataViews.Display>())! as! MetadataViews.Display)
+        let viewResolver: &{MetadataViews.Resolver} = collection.borrowViewResolver(id: id)
+        structs[id] = MetadataViews.getDisplay(viewResolver)
       }
     }
 
