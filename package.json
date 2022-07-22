@@ -2,19 +2,19 @@
   "name": "geeft",
   "type": "module",
   "version": "1.0.0",
-  "description": "A project that will allow users to add any type of NFT to a pack and send it to another user.",
+  "description": "A project that will allow users to add any type of NFT to a geeft and send it to another user.",
   "main": "discover.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/emerald-dao/pack-project.git"
+    "url": "git+https://github.com/emerald-dao/geeft-project.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/emerald-dao/pack-project/issues"
+    "url": "https://github.com/emerald-dao/geeft-project/issues"
   },
-  "homepage": "https://github.com/emerald-dao/pack-project#readme"
+  "homepage": "https://github.com/emerald-dao/geeft-project#readme"
 }
