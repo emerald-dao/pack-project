@@ -15,19 +15,19 @@ pub contract Geeft: NonFungibleToken {
   pub resource NFT: NonFungibleToken.INFT {
     pub let id: UInt64
     // Maps project name (ex. "FLOAT") -> array of NFTs
-    pub var storedNFTs: @{String: [NonFungibleToken.NFT]}
+    pub var storedNFTs: @{Type: [NonFungibleToken.NFT]}
 
-    pub fun getProjects(): [String] {
+    pub fun getProjects(): [Type] {
       return self.storedNFTs.keys
     }
 
-    pub fun open(): @{String: [NonFungibleToken.NFT]} {
-      var storedNFTs: @{String: [NonFungibleToken.NFT]} <- {}
+    pub fun open(): @{Type: [NonFungibleToken.NFT]} {
+      var storedNFTs: @{Type: [NonFungibleToken.NFT]} <- {}
       self.storedNFTs <-> storedNFTs
       return <- storedNFTs
     }
 
-    init(nfts: @{String: [NonFungibleToken.NFT]}) {
+    init(nfts: @{Type: [NonFungibleToken.NFT]}) {
       self.id = self.uuid
       self.storedNFTs <- nfts
       Geeft.totalSupply = Geeft.totalSupply + 1
@@ -41,7 +41,7 @@ pub contract Geeft: NonFungibleToken {
     }
   }
 
-  pub fun sendGeeft(nfts: @{String: [NonFungibleToken.NFT]}, recipient: Address) {
+  pub fun sendGeeft(nfts: @{Type: [NonFungibleToken.NFT]}, recipient: Address) {
     let geeft <- create NFT(nfts: <- nfts)
     let collection = getAccount(recipient).getCapability(Geeft.CollectionPublicPath)
                         .borrow<&Collection{NonFungibleToken.Receiver}>()
@@ -52,7 +52,7 @@ pub contract Geeft: NonFungibleToken {
   pub resource interface CollectionPublic {
     pub fun deposit(token: @NonFungibleToken.NFT)
     pub fun getIDs(): [UInt64]
-    pub fun getProjectsInGeeft(geeftId: UInt64): [String]
+    pub fun getProjectsInGeeft(geeftId: UInt64): [Type]
   }
 
   pub resource Collection: CollectionPublic, NonFungibleToken.Provider, NonFungibleToken.CollectionPublic, NonFungibleToken.Receiver {
@@ -78,14 +78,14 @@ pub contract Geeft: NonFungibleToken {
       return (&self.ownedNFTs[id] as &NonFungibleToken.NFT?)!
     } 
 
-    pub fun openGeeft(geeftId: UInt64): @{String: [NonFungibleToken.NFT]} {
+    pub fun openGeeft(geeftId: UInt64): @{Type: [NonFungibleToken.NFT]} {
       let geeft <- self.withdraw(withdrawID: geeftId) as! @NFT
       let nfts <- geeft.open()
       destroy geeft
       return <- nfts
     }
 
-    pub fun getProjectsInGeeft(geeftId: UInt64): [String] {
+    pub fun getProjectsInGeeft(geeftId: UInt64): [Type] {
       let nft = (&self.ownedNFTs[geeftId] as auth &NonFungibleToken.NFT?)!
       let geeft = nft as! &NFT
       return geeft.getProjects()

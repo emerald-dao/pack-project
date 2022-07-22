@@ -6,7 +6,7 @@ transaction(id: UInt64) {
     let GeeftCollection = signer.borrow<&Geeft.Collection>(from: Geeft.CollectionStoragePath)
                             ?? panic("The signer does not have a Geeft Collection set up.")
     
-    let nfts: @{String: [NonFungibleToken.NFT]} <- GeeftCollection.openGeeft(geeftId: id)
+    let nfts: @{Type: [NonFungibleToken.NFT]} <- GeeftCollection.openGeeft(geeftId: id)
 
     // Collection 1
     if signer.borrow<&Geeft.Collection>(from: Geeft.CollectionStoragePath) == nil {
@@ -17,7 +17,8 @@ transaction(id: UInt64) {
         signer.link<&Geeft.Collection{NonFungibleToken.CollectionPublic, NonFungibleToken.Receiver, Geeft.CollectionPublic}>(Geeft.CollectionPublicPath, target: Geeft.CollectionStoragePath)
     }
     let collection1 = signer.borrow<&Geeft.Collection>(from: Geeft.CollectionStoragePath)!
-    let collection1NFTs: @[NonFungibleToken.NFT] <- nfts.remove(key: "Collection 1") ?? panic("Collection 1 does not exist in here.")
+    let collection1Type: Type = collection1.getType()
+    let collection1NFTs: @[NonFungibleToken.NFT] <- nfts.remove(key: collection1Type) ?? panic("Collection 1 does not exist in here.")
     var i1 = 0
     while i1 < collection1NFTs.length {
       collection1.deposit(token: <- collection1NFTs.removeFirst())
@@ -35,7 +36,8 @@ transaction(id: UInt64) {
         signer.link<&Geeft.Collection{NonFungibleToken.CollectionPublic, NonFungibleToken.Receiver, Geeft.CollectionPublic}>(Geeft.CollectionPublicPath, target: Geeft.CollectionStoragePath)
     }
     let collection2 = signer.borrow<&Geeft.Collection>(from: Geeft.CollectionStoragePath)!
-    let collection2NFTs: @[NonFungibleToken.NFT] <- nfts.remove(key: "Collection 2") ?? panic("Collection 2 does not exist in here.")
+    let collection2Type: Type = collection2.getType()
+    let collection2NFTs: @[NonFungibleToken.NFT] <- nfts.remove(key: collection2Type) ?? panic("Collection 2 does not exist in here.")
     var i2 = 0
     while i2 < collection2NFTs.length {
       collection1.deposit(token: <- collection2NFTs.removeFirst())
